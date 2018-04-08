@@ -1,0 +1,94 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Hello World App
+# during dev, should point to your local machine
+host: localhost:10010
+# basePath prefixes all resource paths 
+basePath: /
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+  /getAppointments:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: getAppointments
+    get:
+      description: Returns a list of all appointments
+      # used as the method name of the controller
+      operationId: appointments
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/People"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /swagger:
+    x-swagger-pipe: swagger_raw
+# complex objects have schema definitions
+definitions:
+  Appointment:
+    properties:
+      start:
+        type: object
+        description: Unique identifier representing an appointment
+      end:
+        type: object
+        description: Start Date of the appointment
+      title:
+        type: string
+        description: Title of the Appointment
+      info:
+        type: string
+        description: additional informations
+      type:
+        type: string
+        description: type of the appointment
+      tentative:
+        type: boolean
+        description: ??
+  Appointments:
+    type: array
+    items:
+      $ref: '#/definitions/Appointment'
+  People:
+    properties:
+      name:
+        type: string
+        description: Name of the person
+      role:
+        type: string
+        description: Name of the role
+      appointments:
+        type: array
+        items:
+          $ref: '#/definitions/Appointments'
+  Response:
+    type: object
+    properties:
+      success:
+        type: number
+      description:
+        type: string
+    required:
+      - success
+      - description
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
